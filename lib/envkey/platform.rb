@@ -2,7 +2,7 @@
 
 module Envkey::Platform
   # Normalize the platform OS
-  OS = case os = RbConfig::CONFIG['host_os'].downcase
+  OS = case RbConfig::CONFIG['host_os'].downcase
        when /linux/
          'linux'
        when /darwin/
@@ -13,7 +13,7 @@ module Envkey::Platform
          'windows'
        else
          'linux'
-  end
+       end
 
   # Normalize the platform CPU
   ARCH = case cpu = RbConfig::CONFIG['host_cpu'].downcase
@@ -27,7 +27,7 @@ module Envkey::Platform
            'arm'
          else
            cpu
-  end
+         end
 
   def self.platform_part
     case OS
@@ -35,7 +35,7 @@ module Envkey::Platform
       OS
     else
       'linux'
-      end
+    end
   end
 
   def self.arch_part
