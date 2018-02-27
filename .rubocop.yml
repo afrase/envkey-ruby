@@ -1,0 +1,31 @@
+require: rubocop-rspec
+
+AllCops:
+  TargetRubyVersion: 2.4
+
+  Exclude:
+    - 'bin/*'
+    - 'vendor/**/*'
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Layout/SpaceAroundEqualsInParameterDefault:
+  # No space makes the method definition shorter and differentiates
+  # from a regular assignment.
+  EnforcedStyle: no_space
+
+Metrics/MethodLength:
+  Max: 20
