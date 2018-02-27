@@ -1,11 +1,10 @@
-require "envkey/version"
+# frozen_string_literal: true
+
+require 'envkey/version'
 
 if defined?(Rails)
-  require "envkey/rails"
+  require 'envkey/rails'
 else
-  require "envkey/core"
+  require 'envkey/core'
   Envkey::Core.load_env
 end
-
-
-

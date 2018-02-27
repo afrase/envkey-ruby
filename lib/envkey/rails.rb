@@ -1,11 +1,12 @@
-require "envkey/core"
+# frozen_string_literal: true
+
+require 'envkey/core'
 
 module Envkey
   class Railtie < Rails::Railtie
-
     config.before_configuration do
       begin
-        require "spring/commands"
+        require 'spring/commands'
         ts = Time.now
         overload_dotenv_vars, overload_envkey_vars = Envkey::Core.load_env
         Spring.after_fork do
