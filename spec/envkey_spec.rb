@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
 require 'spec_helper'
-require 'envkey'
 
 VALID_ENVKEY = 'Emzt4BE7C23QtsC7gb1z-3NvfNiG1Boy6XH2o-env-staging.envkey.com'
 INVALID_ENVKEY = 'Emzt4BE7C23QtsC7gb1z-3NvfNiG1Boy6XH2oinvalid-env-staging.envkey.com'
 INVALID_ENVKEY2 = 'Emzt4BE7C23QtsC7gb1zinvalid-3NvfNiG1Boy6XH2o-env-staging.envkey.com'
 INVALID_ENVKEY3 = 'Emzt4BE7C23QtsC7gb1zinvalid-3NvfNiG1Boy6XH2o-localhost:387946'
 INVALID_ENVKEY4 = 'invalid'
+
 # rubocop:disable all
-describe Envkey do
+RSpec.describe Envkey do
   after do
     ENV.delete('ENVKEY')
     ENV.delete('TEST')
