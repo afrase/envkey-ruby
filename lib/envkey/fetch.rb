@@ -1,18 +1,22 @@
 # frozen_string_literal: true
 
+require 'envkey/platform'
+require 'envkey/version'
+
 module Envkey
-  require_relative 'platform'
-
   class Fetch
-    # @param [String] key
-    # @return [String]
-    def self.fetch_env(key)
-      fetch_env_path = Envkey::Platform.fetch_env_path
-      `#{fetch_env_path} #{key}#{dev? ? ' --cache' : ''} --client-name envkey-ruby --client-version #{Envkey::VERSION}`
-    end
-
     class << self
+      # @param [String] key
+      # @return [String]
+      def fetch_env(key)
+        call_fetch(key, dev? ? ' --cache' : '', '--client-name', 'envkey-ruby', '--client-version', Envkey::VERSION)
+      end
+
       private
+
+      def call_fetch(*args)
+        `#{Envkey::Platform.fetch_env_path} #{args.join(' ')}`
+      end
 
       # @return [Boolean]
       def dev?

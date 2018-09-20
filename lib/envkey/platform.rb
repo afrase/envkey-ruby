@@ -2,32 +2,32 @@
 
 module Envkey
   class Platform
-    def self.platform_part
-      case os
-      when 'darwin', 'linux', 'windows', 'freebsd'
-        os
-      else
-        'linux'
-      end
-    end
-
-    def self.arch_part
-      arch == 'x86_64' ? 'amd64' : '386'
-    end
-
-    def self.ext
-      platform_part == 'windows' ? '.exe' : ''
-    end
-
-    def self.fetch_env_path
-      File.expand_path("../../ext/#{lib_file_dir}/envkey-fetch#{ext}", File.dirname(__FILE__))
-    end
-
-    def self.lib_file_dir
-      ['envkey-fetch', Envkey::ENVKEY_FETCH_VERSION.to_s, platform_part, arch_part].join('_')
-    end
-
     class << self
+      def platform_part
+        case os
+        when 'darwin', 'linux', 'windows', 'freebsd'
+          os
+        else
+          'linux'
+        end
+      end
+
+      def arch_part
+        arch == 'x86_64' ? 'amd64' : '386'
+      end
+
+      def ext
+        platform_part == 'windows' ? '.exe' : ''
+      end
+
+      def fetch_env_path
+        File.expand_path("../../ext/#{lib_file_dir}/envkey-fetch#{ext}", File.dirname(__FILE__))
+      end
+
+      def lib_file_dir
+        ['envkey-fetch', Envkey::ENVKEY_FETCH_VERSION.to_s, platform_part, arch_part].join('_')
+      end
+
       private
 
       # Normalize the platform OS

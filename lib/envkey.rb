@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'envkey/version'
-
-if defined?(Rails)
+if defined?(::Rails)
   require 'envkey/rails'
 else
   require 'envkey/core'

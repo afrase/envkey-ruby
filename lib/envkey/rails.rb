@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-require_relative 'core'
+require 'envkey/core'
 
 module Envkey
   class Railtie < Rails::Railtie
     config.before_configuration do
       begin
         require 'spring/commands'
-
         overload_dotenv_vars, overload_envkey_vars = Envkey::Core.load_env
         Spring.after_fork do
           Envkey::Core.load_env((overload_dotenv_vars || []), (overload_envkey_vars || []))

@@ -3,8 +3,7 @@
 require 'set'
 require 'json'
 require 'dotenv'
-
-require_relative 'fetch'
+require 'envkey/fetch'
 
 module Envkey
   class Core

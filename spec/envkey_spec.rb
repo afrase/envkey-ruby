@@ -2,58 +2,60 @@
 
 require 'spec_helper'
 
-VALID_ENVKEY = 'Emzt4BE7C23QtsC7gb1z-3NvfNiG1Boy6XH2o-env-staging.envkey.com'
-INVALID_ENVKEY = 'Emzt4BE7C23QtsC7gb1z-3NvfNiG1Boy6XH2oinvalid-env-staging.envkey.com'
-INVALID_ENVKEY2 = 'Emzt4BE7C23QtsC7gb1zinvalid-3NvfNiG1Boy6XH2o-env-staging.envkey.com'
-INVALID_ENVKEY3 = 'Emzt4BE7C23QtsC7gb1zinvalid-3NvfNiG1Boy6XH2o-localhost:387946'
-INVALID_ENVKEY4 = 'invalid'
-
-# rubocop:disable all
-RSpec.describe Envkey do
-  after do
-    ENV.delete('ENVKEY')
-    ENV.delete('TEST')
-    ENV.delete('TEST_2')
-  end
-
+RSpec.describe Envkey, mock_env: true do
   it 'has a version number' do
     expect(Envkey::VERSION).not_to be nil
   end
 
   it 'has an envkey-fetch version number' do
-    expect(Envkey::ENVKEY_FETCH_VERSION).not_to be nil
+    expect(Envkey::ENVKEY_FETCH_VERSION).not_to be_nil
   end
 
-  it 'loads and decrypts config with a valid ENVKEY' do
-    ENV['ENVKEY'] = VALID_ENVKEY
-    Envkey::Core.load_env
-    expect(ENV['TEST']).to eq('it')
-    expect(ENV['TEST_2']).to eq('works!')
+  context 'when ENVKEY is valid' do
+    before do
+      ENV['ENVKEY'] = 'foo'
+      allow(Envkey::Fetch).to receive(:fetch_env).and_return('{"KEY1":"key1","KEY2":"key2"}')
+    end
+
+    it 'sets the environment variables' do
+      Envkey::Core.load_env
+      aggregate_failures do
+        expect(ENV['KEY1']).to eq('key1')
+        expect(ENV['KEY2']).to eq('key2')
+      end
+    end
+
+    it 'does not overwrite existing environment variables' do
+      ENV['KEY1'] = 'foo'
+      Envkey::Core.load_env
+      expect(ENV['KEY1']).to eq('foo')
+    end
+
+    context 'when fetch results are empty' do
+      before do
+        allow(Envkey::Fetch).to receive(:fetch_env).and_return("\r\n")
+      end
+
+      it 'raises an error' do
+        expect { Envkey::Core.load_env }.to raise_error(/ENVKEY invalid/)
+      end
+    end
   end
 
-  it "doesn't overwrite existing ENV vars" do
-    ENV['TEST'] = 'otherthing'
-    ENV['ENVKEY'] = VALID_ENVKEY
-    Envkey::Core.load_env
-    expect(ENV['TEST']).to eq('otherthing')
-    expect(ENV['TEST_2']).to eq('works!')
+  context 'when ENVKEY is invalid' do
+    before do
+      ENV['ENVKEY'] = 'foo'
+      allow(Envkey::Fetch).to receive(:fetch_env).and_return('error: ENVKEY invalid')
+    end
+
+    it 'raises an error' do
+      expect { Envkey::Core.load_env }.to raise_error(/ENVKEY invalid/)
+    end
   end
 
-  it 'raises an error with an invalid ENVKEY' do
-    ENV['ENVKEY'] = INVALID_ENVKEY
-    expect { Envkey::Core.load_env }.to raise_error(/ENVKEY invalid/)
-
-    ENV['ENVKEY'] = INVALID_ENVKEY2
-    expect { Envkey::Core.load_env }.to raise_error(/ENVKEY invalid/)
-
-    ENV['ENVKEY'] = INVALID_ENVKEY3
-    expect { Envkey::Core.load_env }.to raise_error(/ENVKEY invalid/)
-
-    ENV['ENVKEY'] = INVALID_ENVKEY4
-    expect { Envkey::Core.load_env }.to raise_error(/ENVKEY invalid/)
-  end
-
-  it 'raises an error no ENVKEY set' do
-    expect { Envkey::Core.load_env }.to raise_error(/ENVKEY missing/)
+  context 'when ENVKEY is not set' do
+    it 'raises an error' do
+      expect { Envkey::Core.load_env }.to raise_error(/ENVKEY missing/)
+    end
   end
 end
